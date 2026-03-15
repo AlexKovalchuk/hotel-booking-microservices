@@ -75,3 +75,8 @@ kubeconfig*
 ####################################
 *.tmp
 *.swp
+
+####################################
+# Invalid Windows-style filenames accidentally created on Unix
+####################################
+*\\*
