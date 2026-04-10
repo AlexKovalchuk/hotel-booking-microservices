@@ -3,13 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Hotels.Infrastructure.Persistence;
 
-public class HotelsDbContext : DbContext
+public class HotelsDbContext(DbContextOptions<HotelsDbContext> options) : DbContext(options)
 {
-    public HotelsDbContext(DbContextOptions<HotelsDbContext> options)
-        : base(options)
-    {
-    }
-    
     public DbSet<Hotel> Hotels => Set<Hotel>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)

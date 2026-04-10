@@ -12,11 +12,12 @@ public class Hotel
     
     protected Hotel() { }
 
-    public Hotel(string name, string address, string city, int starRating, Guid adminUserId)
+    public Hotel(string name, string address, string description, string city, int starRating, Guid adminUserId)
     {
         Id = Guid.NewGuid();
         Name = name;
         Address = address;
+        Description = description;
         City = city;
         StarRating = starRating;
         AdminUserId = adminUserId;

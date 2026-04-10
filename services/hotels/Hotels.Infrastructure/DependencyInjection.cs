@@ -1,4 +1,7 @@
+using Hotels.Application.Abstractions;
+using Hotels.Application.Handlers;
 using Hotels.Infrastructure.Persistence;
+using Hotels.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +13,9 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddDbContext<HotelsDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("HotelsDb")));
+        
+        services.AddScoped<IHotelRepository, HotelRepository>();
+        services.AddScoped<CreateHotelHandler>();
 
         return services;
     }
