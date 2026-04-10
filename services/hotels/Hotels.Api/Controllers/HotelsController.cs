@@ -9,15 +9,18 @@ namespace Hotels.Api.Controllers;
 public class HotelsController : ControllerBase
 {
     private readonly CreateHotelHandler _createHotelHandler;
-    public HotelsController(CreateHotelHandler createHotelHandler)
+    private readonly GetHotelsHandler _getHotelsHandler;
+    public HotelsController(CreateHotelHandler createHotelHandler, GetHotelsHandler getHotelsHandler)
     {
         _createHotelHandler = createHotelHandler;
+        _getHotelsHandler = getHotelsHandler;
     }
     
     [HttpGet]
-    public IActionResult GetHotels()
+    public async Task<IActionResult> GetHotels()
     {
-        return Ok("Sample response from HotelsController. Implement your logic here to return actual hotel data.");
+        var hotels = await _getHotelsHandler.GetHotelsAsync();
+        return Ok(hotels);
     }
     
     [HttpPost]
@@ -33,6 +36,17 @@ public class HotelsController : ControllerBase
 
         var hotelResponse = await _createHotelHandler.CreateHotelAsync(hotelRequest);
 
-        return Ok(hotelResponse);
+        return CreatedAtAction("GetHotelById", new { id = hotelResponse.Id }, hotelResponse);
     }
+    
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetHotelById(Guid id, GetHotelByIdHandler getHotelByIdHandler)
+    {
+        var hotel = await getHotelByIdHandler.GetHotelByIdAsync(id);
+        if (hotel == null)
+            return NotFound("Hotel not found.");
+        
+        return Ok(hotel);
+    }
+        
 }

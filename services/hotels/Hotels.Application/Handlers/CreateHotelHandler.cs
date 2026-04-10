@@ -6,13 +6,6 @@ namespace Hotels.Application.Handlers;
 
 public class CreateHotelHandler(IHotelRepository hotelRepository)
 {
-    /*
-       Його задача має бути така:
-       прийняти DTO
-       створити Hotel
-       зберегти в БД
-       повернути результат назад
-     */
     public async Task<HotelResponse> CreateHotelAsync(CreateHotelRequest hotelRequest)
     {
          Hotel hotel = new Hotel(hotelRequest.Name, hotelRequest.Address, hotelRequest.Description,
