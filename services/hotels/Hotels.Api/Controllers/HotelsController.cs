@@ -10,10 +10,14 @@ public class HotelsController : ControllerBase
 {
     private readonly CreateHotelHandler _createHotelHandler;
     private readonly GetHotelsHandler _getHotelsHandler;
-    public HotelsController(CreateHotelHandler createHotelHandler, GetHotelsHandler getHotelsHandler)
+    private readonly UpdateHotelHandler _updateHotelHandler;
+    private readonly GetHotelByIdHandler _getHotelByIdHandler;
+    public HotelsController(CreateHotelHandler createHotelHandler, GetHotelsHandler getHotelsHandler, UpdateHotelHandler updateHotelHandler, GetHotelByIdHandler getHotelByIdHandler)
     {
         _createHotelHandler = createHotelHandler;
         _getHotelsHandler = getHotelsHandler;
+        _updateHotelHandler = updateHotelHandler;
+        _getHotelByIdHandler = getHotelByIdHandler;
     }
     
     [HttpGet]
@@ -40,13 +44,30 @@ public class HotelsController : ControllerBase
     }
     
     [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetHotelById(Guid id, GetHotelByIdHandler getHotelByIdHandler)
+    public async Task<IActionResult> GetHotelById(Guid id)
     {
-        var hotel = await getHotelByIdHandler.GetHotelByIdAsync(id);
+        var hotel = await _getHotelByIdHandler.GetHotelByIdAsync(id);
         if (hotel == null)
             return NotFound("Hotel not found.");
         
         return Ok(hotel);
+    }
+
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateHotel(Guid id, [FromBody] UpdateHotelRequest? hotelRequest)
+    {
+        if (hotelRequest is null
+            || string.IsNullOrWhiteSpace(hotelRequest.Name)
+            || string.IsNullOrWhiteSpace(hotelRequest.Address)
+            || string.IsNullOrWhiteSpace(hotelRequest.City)
+            || hotelRequest.StarRating < 1 || hotelRequest.StarRating > 5)
+            return BadRequest("Hotel request cannot be null or empty.");
+        
+        var hotelResponse = await _updateHotelHandler.UpdateHotelAsync(id, hotelRequest);
+        if (hotelResponse == null)
+            return NotFound("Hotel not found.");
+        
+        return Ok(hotelResponse);
     }
         
 }

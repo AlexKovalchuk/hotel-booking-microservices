@@ -18,6 +18,7 @@ public static class DependencyInjection
         services.AddScoped<CreateHotelHandler>();
         services.AddScoped<GetHotelsHandler>();
         services.AddScoped<GetHotelByIdHandler>();
+        services.AddScoped<UpdateHotelHandler>();
 
         return services;
     }

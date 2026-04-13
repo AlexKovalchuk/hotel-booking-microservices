@@ -5,9 +5,9 @@ namespace Hotels.Application.Handlers;
 
 public class GetHotelByIdHandler(IHotelRepository hotelRepository)
 {
-    public async Task<HotelResponse?> GetHotelByIdAsync(Guid hotelId)
+    public async Task<HotelResponse?> GetHotelByIdAsync(Guid id)
     {
-        var hotelResponse = (await hotelRepository.GetByIdAsync(hotelId)) switch
+        var hotelResponse = (await hotelRepository.GetByIdAsync(id)) switch
         {
             null => null,
             var hotel => new HotelResponse

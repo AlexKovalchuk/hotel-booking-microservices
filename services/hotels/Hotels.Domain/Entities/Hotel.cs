@@ -22,4 +22,13 @@ public class Hotel
         StarRating = starRating;
         AdminUserId = adminUserId;
     }
+
+    public void Update(string name, string address, string description, string city, int starRating)
+    {
+        Name = name;
+        Address = address;
+        Description = description;
+        City = city;
+        StarRating = starRating;
+    }
 }
