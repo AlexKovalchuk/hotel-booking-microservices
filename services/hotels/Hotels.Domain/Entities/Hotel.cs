@@ -10,6 +10,10 @@ public class Hotel
     public int StarRating { get; private set; }
     public Guid AdminUserId { get; private set; }
     
+    private readonly List<Room> _rooms = new();
+
+    public IReadOnlyCollection<Room> Rooms => _rooms.AsReadOnly();
+    
     protected Hotel() { }
 
     public Hotel(string name, string address, string description, string city, int starRating, Guid adminUserId)
