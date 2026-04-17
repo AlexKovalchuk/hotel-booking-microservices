@@ -12,12 +12,18 @@ public class HotelsController : ControllerBase
     private readonly GetHotelsHandler _getHotelsHandler;
     private readonly UpdateHotelHandler _updateHotelHandler;
     private readonly GetHotelByIdHandler _getHotelByIdHandler;
-    public HotelsController(CreateHotelHandler createHotelHandler, GetHotelsHandler getHotelsHandler, UpdateHotelHandler updateHotelHandler, GetHotelByIdHandler getHotelByIdHandler)
+    private readonly DeleteHotelHandler _deleteHotelHandler;
+
+    public HotelsController(CreateHotelHandler createHotelHandler, GetHotelsHandler getHotelsHandler,
+        UpdateHotelHandler updateHotelHandler, GetHotelByIdHandler getHotelByIdHandler,
+        DeleteHotelHandler deleteHotelHandler
+    )
     {
         _createHotelHandler = createHotelHandler;
         _getHotelsHandler = getHotelsHandler;
         _updateHotelHandler = updateHotelHandler;
         _getHotelByIdHandler = getHotelByIdHandler;
+        _deleteHotelHandler = deleteHotelHandler;
     }
     
     [HttpGet]
@@ -68,6 +74,14 @@ public class HotelsController : ControllerBase
             return NotFound("Hotel not found.");
         
         return Ok(hotelResponse);
+    }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteHotel(Guid id)
+    {
+        var result = await _deleteHotelHandler.DeleteHotelAsync(id);
+        if (!result) return NotFound("Hotel not found.");
+        return NoContent();
     }
         
 }

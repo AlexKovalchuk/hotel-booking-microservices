@@ -22,6 +22,12 @@ public class HotelRepository(HotelsDbContext context) : IHotelRepository
         return await context.Hotels.FirstOrDefaultAsync(hotel => hotel.Id == hotelId, cancellationToken);
     }
 
+    public Task DeleteAsync(Hotel hotel, CancellationToken cancellationToken = default)
+    {
+        context.Hotels.Remove(hotel);
+        return Task.CompletedTask;
+    }
+
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         await context.SaveChangesAsync(cancellationToken);
