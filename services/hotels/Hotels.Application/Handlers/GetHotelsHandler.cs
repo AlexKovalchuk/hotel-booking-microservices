@@ -1,5 +1,5 @@
 using Hotels.Application.Abstractions;
-using Hotels.Application.DTOs;
+using Hotels.Application.DTOs.Hotel;
 
 namespace Hotels.Application.Handlers;
 
