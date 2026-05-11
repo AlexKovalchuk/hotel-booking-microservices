@@ -1,4 +1,4 @@
-using Hotels.Application.DTOs;
+using Hotels.Application.DTOs.Hotel;
 using Hotels.Application.Handlers;
 using Microsoft.AspNetCore.Mvc;
 

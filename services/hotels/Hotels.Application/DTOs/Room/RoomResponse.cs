@@ -2,8 +2,10 @@ using Hotels.Domain.Enums;
 
 namespace Hotels.Application.DTOs.Room;
 
-public class CreateRoomRequest
+public class RoomResponse
 {
+    public Guid Id { get; set; }
+    public Guid HotelId { get; set; }
     public string Number { get; set; } = null!;
     public RoomType Type { get; set; }
     public decimal PricePerNight { get; set; }

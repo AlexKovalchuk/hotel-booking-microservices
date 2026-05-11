@@ -1,5 +1,6 @@
 using Hotels.Application.Abstractions;
 using Hotels.Application.Handlers;
+using Hotels.Application.Handlers.RoomHandlers;
 using Hotels.Infrastructure.Persistence;
 using Hotels.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -20,6 +21,8 @@ public static class DependencyInjection
         services.AddScoped<GetHotelByIdHandler>();
         services.AddScoped<UpdateHotelHandler>();
         services.AddScoped<DeleteHotelHandler>();
+        services.AddScoped<CreateRoomHandler>();
+        services.AddScoped<IRoomRepository, RoomRepository>();
 
         return services;
     }
