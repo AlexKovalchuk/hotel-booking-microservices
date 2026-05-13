@@ -9,10 +9,21 @@ namespace Hotels.Api.Controllers;
 public class RoomsController : ControllerBase
 {
     private readonly CreateRoomHandler _createRoomHandler;
+    private readonly GetRoomsByHotelIdHandler _getRoomsByHotelIdHandler;
     
-    public RoomsController(CreateRoomHandler createRoomHandler)
+    public RoomsController(CreateRoomHandler createRoomHandler, GetRoomsByHotelIdHandler getRoomsByHotelIdHandler)
     {
         _createRoomHandler = createRoomHandler;
+        _getRoomsByHotelIdHandler = getRoomsByHotelIdHandler;
+    }
+
+    [HttpGet("{hotelId:guid}/rooms")]
+    public async Task<IActionResult> GetRoomsByHotelId(Guid hotelId)
+    {
+        var rooms = await _getRoomsByHotelIdHandler.GetRoomsByHotelIdAsync(hotelId);
+        if (rooms == null) return NotFound("Hotel not found.");
+
+        return Ok(rooms);
     }
     
     [HttpPost("{hotelId:guid}/rooms")]
