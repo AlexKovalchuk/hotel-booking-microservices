@@ -1,6 +1,6 @@
 using Hotels.Application.Abstractions;
 
-namespace Hotels.Application.Handlers;
+namespace Hotels.Application.Handlers.HotelHandlers;
 
 public class DeleteHotelHandler(IHotelRepository hotelRepository)
 {

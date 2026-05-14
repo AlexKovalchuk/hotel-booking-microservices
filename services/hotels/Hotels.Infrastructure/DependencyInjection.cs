@@ -1,5 +1,6 @@
 using Hotels.Application.Abstractions;
 using Hotels.Application.Handlers;
+using Hotels.Application.Handlers.HotelHandlers;
 using Hotels.Application.Handlers.RoomHandlers;
 using Hotels.Infrastructure.Persistence;
 using Hotels.Infrastructure.Repositories;

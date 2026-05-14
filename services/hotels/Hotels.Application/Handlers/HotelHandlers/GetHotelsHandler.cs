@@ -1,16 +1,14 @@
 using Hotels.Application.Abstractions;
 using Hotels.Application.DTOs.Hotel;
 
-namespace Hotels.Application.Handlers;
+namespace Hotels.Application.Handlers.HotelHandlers;
 
-public class GetHotelByIdHandler(IHotelRepository hotelRepository)
+public class GetHotelsHandler(IHotelRepository hotelRepository)
 {
-    public async Task<HotelResponse?> GetHotelByIdAsync(Guid id)
+    public async Task<IEnumerable<HotelResponse>> GetHotelsAsync()
     {
-        var hotelResponse = (await hotelRepository.GetByIdAsync(id)) switch
-        {
-            null => null,
-            var hotel => new HotelResponse
+        var hotelResponse = (await hotelRepository.GetHotelsAsync())
+            .Select(hotel => new HotelResponse
             {
                 Id = hotel.Id,
                 Name = hotel.Name,
@@ -19,8 +17,8 @@ public class GetHotelByIdHandler(IHotelRepository hotelRepository)
                 Description = hotel.Description,
                 StarRating = hotel.StarRating,
                 AdminUserId = hotel.AdminUserId
-            }
-        };
+            }).ToList();
+
         return hotelResponse;
     }
 }
