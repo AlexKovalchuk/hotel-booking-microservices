@@ -1,26 +1,22 @@
-using Microsoft.AspNetCore.Http.HttpResults;
+using Hotels.Application.Handlers.RoomHandlers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hotels.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RoomsController
+public class RoomsController(GetRoomByIdHandler getRoomByIdHandler) : ControllerBase
 {
-    public RoomsController()
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetRoomById(Guid id)
     {
-        
+        var roomResponse = await getRoomByIdHandler.GetRoomByIdAsync(id);
+        if (roomResponse == null) return NotFound("Room not found");
+        return Ok(roomResponse);
     }
-    // GET /api/rooms/{id}
-    // [HttpGet("{id:guid}")]
-    // public async Task<IActionResult> GetRoomById(Guid id)
-    // {
-    //     
-    //     return Ok();
-    // }
-    //
     
-    // PUT /api/rooms/{id}
+    
+    // PUT /api/rooms/{id} 
     
     // DELETE /api/rooms/{id}
     

@@ -17,6 +17,11 @@ public class RoomRepository(HotelsDbContext context) : IRoomRepository
         return await context.Rooms.Where(room => room.HotelId == hotelId).ToListAsync(cancellationToken);
     }
 
+    public async Task<Room?> GetRoomByIdAsync(Guid roomId, CancellationToken cancellationToken = default)
+    {
+        return await context.Rooms.FirstOrDefaultAsync(room => room.Id == roomId, cancellationToken);
+    }
+
     public async Task SaveChangesAsync(CancellationToken cancellationToken = default)
     { 
         await context.SaveChangesAsync(cancellationToken);

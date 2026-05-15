@@ -22,9 +22,10 @@ public static class DependencyInjection
         services.AddScoped<GetHotelByIdHandler>();
         services.AddScoped<UpdateHotelHandler>();
         services.AddScoped<DeleteHotelHandler>();
+        services.AddScoped<IRoomRepository, RoomRepository>();
         services.AddScoped<CreateRoomHandler>();
         services.AddScoped<GetRoomsByHotelIdHandler>();
-        services.AddScoped<IRoomRepository, RoomRepository>();
+        services.AddScoped<GetRoomByIdHandler>();
 
         return services;
     }
