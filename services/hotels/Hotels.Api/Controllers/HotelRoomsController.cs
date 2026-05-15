@@ -44,10 +44,6 @@ public class HotelRoomsController : ControllerBase
             return NotFound("Hotel not found.");
         }
         
-        // return CreatedAtAction("GetRoomById", new { id = roomResponse.Id }, roomResponse); // todo: return this result after create GetRoomById
-        return Ok(roomResponse);
+        return CreatedAtAction(nameof(RoomsController.GetRoomById), "Rooms", new { id = roomResponse.Id }, roomResponse);
     }
-    
-    // GET /api/rooms/{id}.
-    // [HttpGet("{hotelId:guid}/rooms/{roomId:guid}")]
 }
