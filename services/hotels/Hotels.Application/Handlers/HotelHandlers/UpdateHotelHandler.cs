@@ -1,8 +1,7 @@
 using Hotels.Application.Abstractions;
-using Hotels.Application.DTOs;
-using Hotels.Domain.Entities;
+using Hotels.Application.DTOs.Hotel;
 
-namespace Hotels.Application.Handlers;
+namespace Hotels.Application.Handlers.HotelHandlers;
 
 public class UpdateHotelHandler(IHotelRepository hotelRepository)
 {

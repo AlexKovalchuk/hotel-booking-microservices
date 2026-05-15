@@ -6,12 +6,14 @@ namespace Hotels.Infrastructure.Persistence;
 public class HotelsDbContext(DbContextOptions<HotelsDbContext> options) : DbContext(options)
 {
     public DbSet<Hotel> Hotels => Set<Hotel>();
+    public DbSet<Room> Rooms => Set<Room>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Тут пізніше будуть конфігурації
-        // modelBuilder.ApplyConfigurationsFromAssembly(typeof(HotelsDbContext).Assembly);
+        modelBuilder.Entity<Room>()
+            .Property(room => room.PricePerNight)
+            .HasPrecision(18, 2);
     }
 }
