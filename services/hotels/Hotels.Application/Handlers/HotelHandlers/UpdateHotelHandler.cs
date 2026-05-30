@@ -8,8 +8,7 @@ public class UpdateHotelHandler(IHotelRepository hotelRepository)
     public async Task<HotelResponse?> UpdateHotelAsync(Guid id, UpdateHotelRequest hotelRequest)
     {
         var hotel = await hotelRepository.GetByIdAsync(id);
-        if (hotel == null)
-            return null;
+        if (hotel == null) return null;
 
         hotel.Update(hotelRequest.Name, hotelRequest.Address, hotelRequest.Description, hotelRequest.City, hotelRequest.StarRating);
         await hotelRepository.SaveChangesAsync();

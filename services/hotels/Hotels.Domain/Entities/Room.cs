@@ -25,4 +25,13 @@ public class Room
         Capacity = capacity;
         Description = description;
     }
+
+    public void Update(string number, RoomType type, decimal pricePerNight, int capacity, string description)
+    {
+        Number = number;
+        Type = type;
+        PricePerNight = pricePerNight;
+        Capacity = capacity;
+        Description = description;
+    }
 }

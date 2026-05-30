@@ -2,7 +2,7 @@ namespace Hotels.Domain.Enums;
 
 public enum RoomType
 {
-    Single,
-    Double,
-    Suite
+    Single = 1,
+    Double = 2,
+    Suite = 3
 }
