@@ -7,7 +7,7 @@ namespace Hotels.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RoomsController(GetRoomByIdHandler getRoomByIdHandler, UpdateRoomHandler updateRoomHandler) : ControllerBase
+public class RoomsController(GetRoomByIdHandler getRoomByIdHandler, UpdateRoomHandler updateRoomHandler, DeleteRoomHandler deleteRoomHandler) : ControllerBase
 {
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetRoomById(Guid id)
@@ -39,5 +39,11 @@ public class RoomsController(GetRoomByIdHandler getRoomByIdHandler, UpdateRoomHa
         return Ok(roomResponse);
     }
     // DELETE /api/rooms/{id}
-    
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteRoom(Guid id)
+    {
+        var result = await deleteRoomHandler.DeleteRoomAsync(id);
+        if (!result) return NotFound("Room not found.");
+        return NoContent();
+    }
 }
