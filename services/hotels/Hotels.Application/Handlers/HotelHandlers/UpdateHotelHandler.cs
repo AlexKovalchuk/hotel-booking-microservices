@@ -1,16 +1,14 @@
 using Hotels.Application.Abstractions;
-using Hotels.Application.DTOs;
-using Hotels.Domain.Entities;
+using Hotels.Application.DTOs.Hotel;
 
-namespace Hotels.Application.Handlers;
+namespace Hotels.Application.Handlers.HotelHandlers;
 
 public class UpdateHotelHandler(IHotelRepository hotelRepository)
 {
     public async Task<HotelResponse?> UpdateHotelAsync(Guid id, UpdateHotelRequest hotelRequest)
     {
         var hotel = await hotelRepository.GetByIdAsync(id);
-        if (hotel == null)
-            return null;
+        if (hotel == null) return null;
 
         hotel.Update(hotelRequest.Name, hotelRequest.Address, hotelRequest.Description, hotelRequest.City, hotelRequest.StarRating);
         await hotelRepository.SaveChangesAsync();

@@ -1,5 +1,6 @@
-using Hotels.Application.DTOs;
+using Hotels.Application.DTOs.Hotel;
 using Hotels.Application.Handlers;
+using Hotels.Application.Handlers.HotelHandlers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hotels.Api.Controllers;
