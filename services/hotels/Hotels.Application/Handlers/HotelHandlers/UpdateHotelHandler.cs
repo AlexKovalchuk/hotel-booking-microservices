@@ -15,6 +15,7 @@ public class UpdateHotelHandler(IHotelRepository hotelRepository)
         
         HotelResponse hotelResponse = new HotelResponse
         {
+            Id = hotel.Id,
             Name = hotel.Name,
             City = hotel.City,
             Address = hotel.Address,

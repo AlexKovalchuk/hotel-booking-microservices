@@ -67,7 +67,9 @@ public class HotelsController : ControllerBase
             || string.IsNullOrWhiteSpace(hotelRequest.Name)
             || string.IsNullOrWhiteSpace(hotelRequest.Address)
             || string.IsNullOrWhiteSpace(hotelRequest.City)
-            || hotelRequest.StarRating < 1 || hotelRequest.StarRating > 5)
+            || hotelRequest.StarRating < 1 || hotelRequest.StarRating > 5
+            || string.IsNullOrWhiteSpace(hotelRequest.Description)
+            )
             return BadRequest("Hotel request cannot be null or empty.");
         
         var hotelResponse = await _updateHotelHandler.UpdateHotelAsync(id, hotelRequest);
