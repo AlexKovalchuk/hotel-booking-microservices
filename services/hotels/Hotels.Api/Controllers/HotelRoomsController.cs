@@ -1,5 +1,7 @@
+using Hotels.Application.Constants;
 using Hotels.Application.DTOs.Room;
 using Hotels.Application.Handlers.RoomHandlers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hotels.Api.Controllers;
@@ -26,6 +28,7 @@ public class HotelRoomsController : ControllerBase
         return Ok(rooms);
     }
     
+    [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpPost("{hotelId:guid}/rooms")]
     public async Task<IActionResult> CreateRoom(Guid hotelId, CreateRoomRequest? roomRequest)
     {

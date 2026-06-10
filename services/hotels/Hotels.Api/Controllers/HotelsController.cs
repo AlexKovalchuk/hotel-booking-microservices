@@ -1,6 +1,9 @@
+using Hotels.Application.Abstractions.Authentication;
+using Hotels.Application.Constants;
 using Hotels.Application.DTOs.Hotel;
-using Hotels.Application.Handlers;
 using Hotels.Application.Handlers.HotelHandlers;
+using Hotels.Application.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hotels.Api.Controllers;
@@ -14,10 +17,11 @@ public class HotelsController : ControllerBase
     private readonly UpdateHotelHandler _updateHotelHandler;
     private readonly GetHotelByIdHandler _getHotelByIdHandler;
     private readonly DeleteHotelHandler _deleteHotelHandler;
+    private readonly ICurrentUserService _currentUserService;
 
     public HotelsController(CreateHotelHandler createHotelHandler, GetHotelsHandler getHotelsHandler,
         UpdateHotelHandler updateHotelHandler, GetHotelByIdHandler getHotelByIdHandler,
-        DeleteHotelHandler deleteHotelHandler
+        DeleteHotelHandler deleteHotelHandler, ICurrentUserService currentUserService
     )
     {
         _createHotelHandler = createHotelHandler;
@@ -25,8 +29,9 @@ public class HotelsController : ControllerBase
         _updateHotelHandler = updateHotelHandler;
         _getHotelByIdHandler = getHotelByIdHandler;
         _deleteHotelHandler = deleteHotelHandler;
+        _currentUserService = currentUserService;
     }
-    
+
     [HttpGet]
     public async Task<IActionResult> GetHotels()
     {
@@ -34,6 +39,7 @@ public class HotelsController : ControllerBase
         return Ok(hotels);
     }
     
+    [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpPost]
     public async Task<IActionResult> CreateHotel([FromBody] CreateHotelRequest? hotelRequest)
     {
@@ -41,11 +47,13 @@ public class HotelsController : ControllerBase
             || string.IsNullOrWhiteSpace(hotelRequest.Name)
             || string.IsNullOrWhiteSpace(hotelRequest.Address)
             || string.IsNullOrWhiteSpace(hotelRequest.City)
-            || hotelRequest.StarRating < 1 || hotelRequest.StarRating > 5
-            || hotelRequest.AdminUserId == Guid.Empty )
+            || string.IsNullOrWhiteSpace(hotelRequest.Description)
+            || hotelRequest.StarRating < 1 || hotelRequest.StarRating > 5)
             return BadRequest("Hotel request cannot be null or empty.");
 
-        var hotelResponse = await _createHotelHandler.CreateHotelAsync(hotelRequest);
+        var currentUserId = _currentUserService.UserId;
+        if (currentUserId is null) return Unauthorized("Invalid credentials.");
+        var hotelResponse = await _createHotelHandler.CreateHotelAsync(hotelRequest, currentUserId.Value);
 
         return CreatedAtAction("GetHotelById", new { id = hotelResponse.Id }, hotelResponse);
     }
@@ -60,6 +68,7 @@ public class HotelsController : ControllerBase
         return Ok(hotel);
     }
 
+    [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateHotel(Guid id, [FromBody] UpdateHotelRequest? hotelRequest)
     {
@@ -72,18 +81,31 @@ public class HotelsController : ControllerBase
             )
             return BadRequest("Hotel request cannot be null or empty.");
         
-        var hotelResponse = await _updateHotelHandler.UpdateHotelAsync(id, hotelRequest);
-        if (hotelResponse == null)
-            return NotFound("Hotel not found.");
+        var currentUserId = _currentUserService.UserId;
+        string? userRole = _currentUserService.Role;
+        if (currentUserId is null || userRole is null) return Unauthorized("Invalid credentials.");
         
-        return Ok(hotelResponse);
+        var hotelResponse = await _updateHotelHandler.UpdateHotelAsync(id, hotelRequest, currentUserId.Value, userRole);
+        if (hotelResponse.AccessResult == AccessCheckResult.NotFound)
+            return NotFound("Hotel not found.");
+        if (hotelResponse.AccessResult == AccessCheckResult.Forbidden)
+            return StatusCode(403, "Forbidden action");
+        
+        return Ok(hotelResponse.Hotel);
     }
 
+    [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteHotel(Guid id)
     {
-        var result = await _deleteHotelHandler.DeleteHotelAsync(id);
-        if (!result) return NotFound("Hotel not found.");
+        var currentUserId = _currentUserService.UserId;
+        string? userRole = _currentUserService.Role;
+        if (currentUserId is null || userRole is null) return Unauthorized("Invalid credentials.");
+        
+        var result = await _deleteHotelHandler.DeleteHotelAsync(id, currentUserId.Value, userRole);
+        if (result == AccessCheckResult.NotFound) return NotFound("Hotel not found.");
+        if (result == AccessCheckResult.Forbidden) return StatusCode(403, "Forbidden action");
+
         return NoContent();
     }
         

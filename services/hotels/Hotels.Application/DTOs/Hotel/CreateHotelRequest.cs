@@ -7,5 +7,4 @@ public class CreateHotelRequest
     public string Address { get; set; } = null!;
     public string Description { get; set; } = null!;
     public int StarRating { get; set; }
-    public Guid AdminUserId { get; set; }
 }

@@ -1,14 +1,20 @@
 using Hotels.Application.Abstractions;
+using Hotels.Application.Constants;
 using Hotels.Application.DTOs.Hotel;
+using Hotels.Application.HandlerResults;
+using Hotels.Application.Enums;
 
 namespace Hotels.Application.Handlers.HotelHandlers;
 
 public class UpdateHotelHandler(IHotelRepository hotelRepository)
 {
-    public async Task<HotelResponse?> UpdateHotelAsync(Guid id, UpdateHotelRequest hotelRequest)
+    public async Task<UpdateHotelResult> UpdateHotelAsync(Guid id, UpdateHotelRequest hotelRequest, Guid currentUserId, string userRole)
     {
         var hotel = await hotelRepository.GetByIdAsync(id);
-        if (hotel == null) return null;
+
+        if (hotel == null) return new UpdateHotelResult(AccessCheckResult.NotFound);
+        if (hotel.AdminUserId != currentUserId && userRole != AuthorizationRoles.SuperAdmin) 
+            return new UpdateHotelResult(AccessCheckResult.Forbidden);
 
         hotel.Update(hotelRequest.Name, hotelRequest.Address, hotelRequest.Description, hotelRequest.City, hotelRequest.StarRating);
         await hotelRepository.SaveChangesAsync();
@@ -23,6 +29,8 @@ public class UpdateHotelHandler(IHotelRepository hotelRepository)
             StarRating = hotel.StarRating,
             AdminUserId = hotel.AdminUserId
         };
-        return hotelResponse;
+
+        UpdateHotelResult result = new UpdateHotelResult(AccessCheckResult.Allowed, hotelResponse);
+        return result;
     }
 }

@@ -1,6 +1,7 @@
 using Hotels.Application.DTOs.Room;
 using Hotels.Application.Handlers.RoomHandlers;
 using Hotels.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hotels.Api.Controllers;
@@ -17,7 +18,7 @@ public class RoomsController(GetRoomByIdHandler getRoomByIdHandler, UpdateRoomHa
         return Ok(roomResponse);
     }
     
-    // PUT /api/rooms/{id} 
+    [Authorize(Roles = "HotelAdmin,SuperAdmin")]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateRoom(Guid id, [FromBody] UpdateRoomRequest roomRequest)
     {
@@ -38,7 +39,8 @@ public class RoomsController(GetRoomByIdHandler getRoomByIdHandler, UpdateRoomHa
 
         return Ok(roomResponse);
     }
-    // DELETE /api/rooms/{id}
+    
+    [Authorize(Roles = "HotelAdmin,SuperAdmin")]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteRoom(Guid id)
     {

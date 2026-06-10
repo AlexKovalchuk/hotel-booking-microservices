@@ -6,10 +6,10 @@ namespace Hotels.Application.Handlers.HotelHandlers;
 
 public class CreateHotelHandler(IHotelRepository hotelRepository)
 {
-    public async Task<HotelResponse> CreateHotelAsync(CreateHotelRequest hotelRequest)
+    public async Task<HotelResponse> CreateHotelAsync(CreateHotelRequest hotelRequest, Guid adminUserId)
     {
          Hotel hotel = new Hotel(hotelRequest.Name, hotelRequest.Address, hotelRequest.Description,
-             hotelRequest.City, hotelRequest.StarRating, hotelRequest.AdminUserId);
+             hotelRequest.City, hotelRequest.StarRating, adminUserId);
          await hotelRepository.AddAsync(hotel);
          await hotelRepository.SaveChangesAsync();
 
