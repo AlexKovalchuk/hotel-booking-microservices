@@ -6,7 +6,7 @@ namespace Hotels.Application.HandlerResults;
 public class UpdateHotelResult
 {
     public AccessCheckResult AccessResult { get; private set; }
-    public HotelResponse? Hotel { get; set; }
+    public HotelResponse? Hotel { get; private set; }
 
     public UpdateHotelResult(AccessCheckResult accessResult)
     {

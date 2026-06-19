@@ -1,3 +1,4 @@
+using Hotels.Application.Constants;
 using Hotels.Application.DTOs.Room;
 using Hotels.Application.Handlers.RoomHandlers;
 using Hotels.Domain.Enums;
@@ -18,7 +19,7 @@ public class RoomsController(GetRoomByIdHandler getRoomByIdHandler, UpdateRoomHa
         return Ok(roomResponse);
     }
     
-    [Authorize(Roles = "HotelAdmin,SuperAdmin")]
+    [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateRoom(Guid id, [FromBody] UpdateRoomRequest roomRequest)
     {
@@ -40,7 +41,7 @@ public class RoomsController(GetRoomByIdHandler getRoomByIdHandler, UpdateRoomHa
         return Ok(roomResponse);
     }
     
-    [Authorize(Roles = "HotelAdmin,SuperAdmin")]
+    [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteRoom(Guid id)
     {
