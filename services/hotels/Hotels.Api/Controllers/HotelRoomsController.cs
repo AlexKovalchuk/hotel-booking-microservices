@@ -49,7 +49,9 @@ public class HotelRoomsController : ControllerBase
         var currentUserId = _currentUserService.UserId;
         string? userRole = _currentUserService.Role;
         if (currentUserId is null || userRole is null) return Unauthorized("Invalid credentials.");
+        
         var roomResponse = await _createRoomHandler.CreateRoomAsync(hotelId, roomRequest, currentUserId.Value, userRole);
+        
         if (roomResponse.AccessResult == AccessCheckResult.NotFound) return NotFound("Hotel not found.");
         if (roomResponse.AccessResult == AccessCheckResult.Forbidden) return StatusCode(403, "Forbidden action");
         if(roomResponse is { AccessResult: AccessCheckResult.Allowed, Room: not null })
