@@ -11,6 +11,7 @@
 *.runtimeconfig.json
 *.pdb
 .DS_Store
+services/hotels/*.DotSettings.user
 
 ####################################
 # Test & Coverage

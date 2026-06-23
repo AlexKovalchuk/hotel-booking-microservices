@@ -1,10 +1,14 @@
 using Hotels.Infrastructure;
 using Microsoft.OpenApi;
+using System.Text;
+using Hotels.Api.Authentication;
+using Hotels.Application.Abstractions.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddInfrastructure(builder.Configuration);
 
-builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -32,6 +36,33 @@ builder.Services.AddSwaggerGen(options =>
         }
     });
 });
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var jwtSecret = builder.Configuration["Jwt:Secret"];
+        var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+        var jwtAudience = builder.Configuration["Jwt:Audience"];
+
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = jwtIssuer,
+
+            ValidateAudience = true,
+            ValidAudience = jwtAudience,
+
+            ValidateLifetime = true,
+
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(jwtSecret!))
+        };
+    });
+
+builder.Services.AddAuthorization();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -49,7 +80,8 @@ if (app.Environment.IsDevelopment())
         }
     });
 }
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

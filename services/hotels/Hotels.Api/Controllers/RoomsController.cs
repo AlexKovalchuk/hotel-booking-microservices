@@ -1,13 +1,20 @@
+using Hotels.Application.Abstractions.Authentication;
+using Hotels.Application.Constants;
 using Hotels.Application.DTOs.Room;
+using Hotels.Application.Enums;
 using Hotels.Application.Handlers.RoomHandlers;
 using Hotels.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hotels.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class RoomsController(GetRoomByIdHandler getRoomByIdHandler, UpdateRoomHandler updateRoomHandler, DeleteRoomHandler deleteRoomHandler) : ControllerBase
+public class RoomsController(GetRoomByIdHandler getRoomByIdHandler,
+    UpdateRoomHandler updateRoomHandler,
+    DeleteRoomHandler deleteRoomHandler,
+    ICurrentUserService currentUserService) : ControllerBase
 {
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetRoomById(Guid id)
@@ -17,7 +24,7 @@ public class RoomsController(GetRoomByIdHandler getRoomByIdHandler, UpdateRoomHa
         return Ok(roomResponse);
     }
     
-    // PUT /api/rooms/{id} 
+    [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateRoom(Guid id, [FromBody] UpdateRoomRequest roomRequest)
     {
@@ -32,18 +39,32 @@ public class RoomsController(GetRoomByIdHandler getRoomByIdHandler, UpdateRoomHa
         {
             return BadRequest("Room request is invalid");
         }
+        
+        var currentUserId = currentUserService.UserId;
+        string? userRole = currentUserService.Role;
+        if (currentUserId is null || userRole is null) return Unauthorized("Invalid credentials.");
 
-        var roomResponse = await updateRoomHandler.UpdateRoomAsync(id, roomRequest);
-        if (roomResponse == null) return NotFound("Room not found");
-
-        return Ok(roomResponse);
+        var roomResponse = await updateRoomHandler.UpdateRoomAsync(id, roomRequest, currentUserId.Value, userRole);
+        if (roomResponse.AccessResult == AccessCheckResult.NotFound) return NotFound("Hotel not found.");
+        if (roomResponse.AccessResult == AccessCheckResult.Forbidden) return StatusCode(403, "Forbidden action");
+        if (roomResponse.AccessResult != AccessCheckResult.Allowed) return StatusCode(500, "Unexpected room updating result.");
+            
+        return Ok(roomResponse.Room);
     }
-    // DELETE /api/rooms/{id}
+    
+    [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteRoom(Guid id)
     {
-        var result = await deleteRoomHandler.DeleteRoomAsync(id);
-        if (!result) return NotFound("Room not found.");
+        var currentUserId = currentUserService.UserId;
+        string? userRole = currentUserService.Role;
+        if (currentUserId is null || userRole is null) return Unauthorized("Invalid credentials.");
+        
+        var result = await deleteRoomHandler.DeleteRoomAsync(id, currentUserId.Value, userRole);
+        if (result == AccessCheckResult.NotFound) return NotFound("Room not found.");
+        if (result == AccessCheckResult.Forbidden) return StatusCode(403, "Forbidden action");
+        if(result != AccessCheckResult.Allowed) return StatusCode(500, "Unexpected room updating result.");
+        
         return NoContent();
     }
 }
