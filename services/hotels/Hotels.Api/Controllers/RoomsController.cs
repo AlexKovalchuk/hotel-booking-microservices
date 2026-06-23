@@ -47,19 +47,24 @@ public class RoomsController(GetRoomByIdHandler getRoomByIdHandler,
         var roomResponse = await updateRoomHandler.UpdateRoomAsync(id, roomRequest, currentUserId.Value, userRole);
         if (roomResponse.AccessResult == AccessCheckResult.NotFound) return NotFound("Hotel not found.");
         if (roomResponse.AccessResult == AccessCheckResult.Forbidden) return StatusCode(403, "Forbidden action");
-        if (roomResponse is { AccessResult: AccessCheckResult.Allowed, Room: not null })
-            return Ok(roomResponse.Room);
-
-
-        return StatusCode(500, "Unexpected room updating result.");
+        if (roomResponse.AccessResult != AccessCheckResult.Allowed) return StatusCode(500, "Unexpected room updating result.");
+            
+        return Ok(roomResponse.Room);
     }
     
     [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteRoom(Guid id)
     {
-        var result = await deleteRoomHandler.DeleteRoomAsync(id);
-        if (!result) return NotFound("Room not found.");
+        var currentUserId = currentUserService.UserId;
+        string? userRole = currentUserService.Role;
+        if (currentUserId is null || userRole is null) return Unauthorized("Invalid credentials.");
+        
+        var result = await deleteRoomHandler.DeleteRoomAsync(id, currentUserId.Value, userRole);
+        if (result == AccessCheckResult.NotFound) return NotFound("Room not found.");
+        if (result == AccessCheckResult.Forbidden) return StatusCode(403, "Forbidden action");
+        if(result != AccessCheckResult.Allowed) return StatusCode(500, "Unexpected room updating result.");
+        
         return NoContent();
     }
 }

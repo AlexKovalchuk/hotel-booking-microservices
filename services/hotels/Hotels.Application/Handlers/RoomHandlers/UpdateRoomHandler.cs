@@ -13,8 +13,7 @@ public class UpdateRoomHandler(IRoomRepository roomRepository)
     {
         var room = await roomRepository.GetRoomByIdWithHotelAsync(id);
         if (room == null) return new UpdateRoomResult(AccessCheckResult.NotFound);
-        if (room.Hotel.AdminUserId != adminUserId 
-            && userRole != AuthorizationRoles.SuperAdmin)
+        if (room.Hotel.AdminUserId != adminUserId && userRole != AuthorizationRoles.SuperAdmin)
             return new UpdateRoomResult(AccessCheckResult.Forbidden);
         
 
