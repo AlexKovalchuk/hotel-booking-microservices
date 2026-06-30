@@ -32,6 +32,7 @@ public class HotelsController : ControllerBase
         _currentUserService = currentUserService;
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpGet]
     public async Task<IActionResult> GetHotels()
     {
@@ -39,6 +40,10 @@ public class HotelsController : ControllerBase
         return Ok(hotels);
     }
     
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpPost]
     public async Task<IActionResult> CreateHotel([FromBody] CreateHotelRequest? hotelRequest)
@@ -58,16 +63,22 @@ public class HotelsController : ControllerBase
         return CreatedAtAction("GetHotelById", new { id = hotelResponse.Id }, hotelResponse);
     }
     
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetHotelById(Guid id)
     {
         var hotel = await _getHotelByIdHandler.GetHotelByIdAsync(id);
-        if (hotel == null)
-            return NotFound("Hotel not found.");
+        if (hotel == null) return NotFound("Hotel not found.");
         
         return Ok(hotel);
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateHotel(Guid id, [FromBody] UpdateHotelRequest? hotelRequest)
@@ -94,6 +105,10 @@ public class HotelsController : ControllerBase
         return Ok(hotelResponse.Hotel);
     }
 
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteHotel(Guid id)

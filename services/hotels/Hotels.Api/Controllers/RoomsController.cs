@@ -16,6 +16,9 @@ public class RoomsController(GetRoomByIdHandler getRoomByIdHandler,
     DeleteRoomHandler deleteRoomHandler,
     ICurrentUserService currentUserService) : ControllerBase
 {
+    
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetRoomById(Guid id)
     {
@@ -24,6 +27,11 @@ public class RoomsController(GetRoomByIdHandler getRoomByIdHandler,
         return Ok(roomResponse);
     }
     
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateRoom(Guid id, [FromBody] UpdateRoomRequest roomRequest)
@@ -52,6 +60,10 @@ public class RoomsController(GetRoomByIdHandler getRoomByIdHandler,
         return Ok(roomResponse.Room);
     }
     
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteRoom(Guid id)
