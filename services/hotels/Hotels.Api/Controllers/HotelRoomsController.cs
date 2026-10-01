@@ -24,6 +24,8 @@ public class HotelRoomsController : ControllerBase
         _currentUserService = currentUserService;
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [HttpGet("{hotelId:guid}/rooms")]
     public async Task<IActionResult> GetRoomsByHotelId(Guid hotelId)
     {
@@ -32,7 +34,12 @@ public class HotelRoomsController : ControllerBase
 
         return Ok(rooms);
     }
-    
+
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize(Roles = AuthorizationRoles.HotelAdminOrSuperAdmin)]
     [HttpPost("{hotelId:guid}/rooms")]
     public async Task<IActionResult> CreateRoom(Guid hotelId, CreateRoomRequest? roomRequest)
