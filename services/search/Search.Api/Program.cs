@@ -1,5 +1,6 @@
 using Microsoft.OpenApi;
 using Search.Application.Abstractions;
+using Search.Application.Handlers;
 using Search.Infrastructure.Clients;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddScoped<SearchHotelsHandler>();
 builder.Services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo

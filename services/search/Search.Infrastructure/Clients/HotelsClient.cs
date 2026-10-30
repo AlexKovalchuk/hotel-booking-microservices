@@ -7,11 +7,9 @@ namespace Search.Infrastructure.Clients;
 
 public class HotelsClient(HttpClient httpClient) : IHotelsClient
 {
-    private readonly HttpClient _httpClient = httpClient;
-
     public async Task<IReadOnlyList<HotelDetailsDto>> GetHotelsAsync(CancellationToken cancellationToken = default)
     {
-        using var response = await _httpClient.GetAsync("api/hotels", cancellationToken);
+        using var response = await httpClient.GetAsync("api/hotels", cancellationToken);
 
         response.EnsureSuccessStatusCode();
         
@@ -23,7 +21,7 @@ public class HotelsClient(HttpClient httpClient) : IHotelsClient
 
     public async Task<IReadOnlyList<RoomDetailsDto>> GetRoomsByHotelIdAsync(Guid hotelId, CancellationToken cancellationToken = default)
     {
-        using var response = await _httpClient.GetAsync($"api/hotels/{hotelId}/rooms", cancellationToken);
+        using var response = await httpClient.GetAsync($"api/hotels/{hotelId}/rooms", cancellationToken);
         
         response.EnsureSuccessStatusCode();
         
