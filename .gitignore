@@ -11,7 +11,17 @@
 *.runtimeconfig.json
 *.pdb
 .DS_Store
-services/hotels/*.DotSettings.user
+
+# Personal IDE settings
+*.DotSettings.user
+*.csproj.user
+*.suo
+.vs/
+
+# Local environment variables
+.env
+.env.*
+!.env.example
 
 ####################################
 # Test & Coverage
